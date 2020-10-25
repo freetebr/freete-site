@@ -21,7 +21,12 @@ export default {
       return 'px-5 py-2 text-xl';
     },
     colorClass() {
-      return `bg-${this.color}-600 hover:bg-${this.color}-500 border-2 border-transparent focus:border-${this.color}-100`;
+      switch (this.color) {
+        case 'orange':
+          return 'bg-orange-600 hover:bg-orange-500 border-2 border-transparent focus:border-orange-100';
+        default:
+          return `bg-gray-600 hover:bg-gray-500 border-2 border-transparent focus:border-gray-100`;
+      }
     },
   },
 };

@@ -4,6 +4,7 @@
     <input
       v-bind="$attrs"
       class="py-2 px-3 text-white bg-gray-500 outline-none border-2 rounded border-transparent focus:border-orange-500"
+      @input="$emit('input', $event.target.value)"
     />
   </div>
 </template>

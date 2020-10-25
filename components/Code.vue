@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pre><code :class="`language-${lang}`">{{ str }}</code></pre>
+    <pre><code :class="`language-${lang}`" v-html="str" /></pre>
   </div>
 </template>
 

@@ -37,8 +37,10 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'https://freete-server.herokuapp.com',
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
-}
+};

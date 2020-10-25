@@ -60,24 +60,31 @@
       <div class="max-w-screen-lg mx-auto flex flex-col items-center py-10">
         <h3 class="text-xl uppercase tracking-widest font-bold text-gray-300">playground</h3>
         <div class="w-full flex flex-col space-y-10 px-3 lg:space-y-0 lg:flex-row space-around mt-10 lg:space-x-10">
-          <form class="lg:w-1/2 flex flex-col items-start space-y-5" action="">
+          <form class="lg:w-1/2 flex flex-col items-start space-y-5" @submit.prevent="cotar">
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">Entrega</h4>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
-              <Input id="origem" type="text" label="origem" />
-              <Input id="destino" type="text" label="destino" />
+              <Input id="origem" v-model="form.origem" type="text" label="origem" />
+              <Input id="destino" v-model="form.destino" type="text" label="destino" />
             </div>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
-              <Input id="remetente" type="text" label="remetente" />
-              <Input id="destinatario" type="text" label="destinatario" />
+              <Input id="remetente" v-model="form.remetente" type="text" label="remetente" />
+              <Input id="destinatario" v-model="form.destinatario" type="text" label="destinatario" />
             </div>
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">Pacote</h4>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
-              <Input id="altura" type="number" label="altura" suffix="cm" />
-              <Input id="largura" type="number" label="largura" suffix="cm" />
+              <Input id="altura" v-model="form.altura" type="number" label="altura" suffix="cm" step=".1" />
+              <Input id="largura" v-model="form.largura" type="number" label="largura" suffix="cm" step=".1" />
             </div>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
-              <Input id="comprimento" type="number" label="comprimento" suffix="cm" />
-              <Input id="peso" type="number" label="peso" suffix="kg" />
+              <Input
+                id="comprimento"
+                v-model="form.comprimento"
+                type="number"
+                label="comprimento"
+                suffix="cm"
+                step=".1"
+              />
+              <Input id="peso" v-model="form.peso" type="number" label="peso" suffix="kg" step=".1" />
             </div>
             <Button type="submit" color="orange" class="self-center md:self-end">Cotar</Button>
           </form>
@@ -85,7 +92,7 @@
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">
               Requisição
             </h4>
-            <Code class="w-full" lang="javascript" :str="js"></Code>
+            <Code class="w-full" lang="bash" :str="request"></Code>
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">Resposta</h4>
             <Code class="w-full" lang="json5" :str="json" />
           </div>
@@ -123,7 +130,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue';
 
 export default Vue.extend({
@@ -151,23 +158,47 @@ export default Vue.extend({
           link: '',
         },
       ],
-      json: `
-[]
-      `,
-      js: `
-const URL_TO_FETCH = 'https://braziljs.org/api/list/events';
-fetch(URL_TO_FETCH, { 
-  method: 'get' // opcional
-})
-.then(function(response) { 
-  response.text()
-  .then(function(result){ 
-    console.log(result); 
-  })
-})
-.catch(function(err) { console.error(err); });
-      `,
+      form: {
+        origem: '86061270',
+        destino: '86400000',
+        remetente: '60701190000104',
+        destinatario: '30539356867',
+        altura: 0.5,
+        largura: 0.5,
+        peso: 1,
+        comprimento: 0.5,
+      },
+      json: `[]`,
     };
+  },
+  computed: {
+    request() {
+      return `curl -X GET "https://freete-server.herokuapp.com/cotacao?cepOrigem=${this.form.origem}&cepDestino=${this.form.destino}&altura=${this.form.altura}&largura=${this.form.largura}&comprimento=${this.form.comprimento}&peso=${this.form.peso}&remetente=${this.form.remetente}&valor=100.00&destinatario=${this.form.destinatario}"`;
+    },
+  },
+  methods: {
+    cotar() {
+      this.$axios
+        .$get('/cotacao', {
+          params: {
+            cepOrigem: this.form.origem,
+            cepDestino: this.form.destino,
+            remetente: this.form.remetente,
+            destinatario: this.form.destinatario,
+            altura: this.form.altura,
+            largura: this.form.largura,
+            valor: 100.0,
+            comprimento: this.form.comprimento,
+            peso: this.form.peso,
+          },
+        })
+        .then((resposta) => {
+          this.json = JSON.stringify(resposta, null, 2);
+        })
+        .catch((err) => {
+          this.json = JSON.stringify(err, null, 2);
+        });
+    },
   },
 });
 </script>

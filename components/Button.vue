@@ -1,5 +1,8 @@
 <template>
-  <button :class="[colorClass, sizeClass]" class="rounded-sm shadow text-white font-semibold focus:outline-none">
+  <button
+    :class="[colorClass, sizeClass]"
+    class="rounded-sm shadow text-white font-semibold focus:outline-none flex items-center justify-center space-x-5 disabled:opacity-75 disabled:cursor-not-allowed"
+  >
     <slot></slot>
   </button>
 </template>

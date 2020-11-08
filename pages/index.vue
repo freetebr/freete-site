@@ -2,7 +2,23 @@
   <div class="bg-gray-900 min-h-screen">
     <header id="cabeçalho" class="w-100 bg-gray-800 px-3">
       <div class="max-w-screen-xl mx-auto py-5 flex justify-between items-center">
-        <p class="text-xl leading-none text-white font-bold italic">Freete</p>
+        <p class="text-2xl leading-none flex items-center text-orange-600">
+          <svg
+            class="h-8 w-8 mr-4"
+            width="269"
+            height="269"
+            viewBox="0 0 269 269"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 42.5L136.5 3.5L266.5 42.5M3 42.5L136.5 86.5M3 42.5V127.75M136.5 265.5L3 213V127.75M136.5 265.5L266.5 213V127.75V42.5M136.5 265.5V177.75M266.5 42.5L136.5 86.5M136.5 86.5V177.75M3 127.75L136.5 177.75M136.5 177.75L198 155"
+              stroke="#F35627"
+              stroke-width="5"
+            />
+          </svg>
+          <span class="font-bold">free</span><span class="font-light">te</span>
+        </p>
         <Button class="sm:hidden">
           <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -10,11 +26,11 @@
         </Button>
         <nav class="hidden sm:block">
           <ul class="flex text-gray-300 font-bold space-x-5">
-            <li>
+            <li class="hover:text-white">
               <a href="#"> Documentação </a>
             </li>
-            <li>
-              <a href="#" class="flex items-center">
+            <li class="hover:text-white">
+              <a href="https://github.com/freetebr" target="_blank" class="flex items-center">
                 <Github class="w-6 h-6 mr-2" />
                 Github
               </a>
@@ -67,8 +83,8 @@
               <Input id="destino" v-model="form.destino" type="text" label="destino" />
             </div>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
-              <Input id="remetente" v-model="form.remetente" type="text" label="remetente" />
-              <Input id="destinatario" v-model="form.destinatario" type="text" label="destinatario" />
+              <Input id="remetente" v-model="form.remetente" type="text" suffix="CNPJ" label="remetente" />
+              <Input id="destinatario" v-model="form.destinatario" type="text" suffix="CNPJ" label="destinatario" />
             </div>
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">Pacote</h4>
             <div class="flex w-full flex-col mt-5 sm:flex-row sm:space-x-5">
@@ -86,7 +102,9 @@
               />
               <Input id="peso" v-model="form.peso" type="number" label="peso" suffix="kg" step=".1" />
             </div>
-            <Button type="submit" color="orange" class="self-center md:self-end">Cotar</Button>
+            <Button type="submit" color="orange" class="self-center md:self-end" :disabled="carregando">
+              Cotar <Loader v-show="carregando" class="bg-white w-5 h-5 ml-2" />
+            </Button>
           </form>
           <div class="lg:w-1/2 flex flex-col items-start space-y-5">
             <h4 class="uppercase text-gray-300 font-bold border-b border-orange-500 pr-5 tracking-widest">
@@ -136,6 +154,7 @@ import Vue from 'vue';
 export default Vue.extend({
   data() {
     return {
+      carregando: false,
       transportadoras: [
         {
           id: 'jamef',
@@ -178,6 +197,7 @@ export default Vue.extend({
   },
   methods: {
     cotar() {
+      this.carregando = true;
       this.$axios
         .$get('/cotacao', {
           params: {
@@ -197,7 +217,8 @@ export default Vue.extend({
         })
         .catch((err) => {
           this.json = JSON.stringify(err, null, 2);
-        });
+        })
+        .finally(() => (this.carregando = false));
     },
   },
 });

@@ -40,6 +40,8 @@ module.exports = {
   },
   variants: {
     borderStyle: ['responsive', 'hover', 'focus'],
+    opacity: ['responsive', 'hover', 'focus', 'disabled'],
+    cursor: ['responsive', 'disabled'],
   },
   plugins: [],
 };
